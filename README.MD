@@ -4,7 +4,7 @@ En este documento explico cómo he añadido la funcionalidad para editar un usua
 
 Mi idea era que cuando el usuario hiciera clic en "Editar", el formulario de "Agregar nuevo usuario" se transformara en un formulario de "Editar usuario", se rellenara con los datos de la persona seleccionada y, al enviarlo, actualizara la información en el servidor.
 
-## El Flujo: ¿Cómo funciona paso a paso?
+## El Flujo: ¿Cómo lo he hecho funcionar?
 
 Para explicarlo, imaginé que la página web (el **frontend**, mi `main.js`) y el servidor (el **backend**, mi `api.php`) son dos personas que hablan por teléfono.
 
@@ -18,152 +18,34 @@ Para explicarlo, imaginé que la página web (el **frontend**, mi `main.js`) y e
 
 ---
 
-## Parte 1: El Frontend 
+## Parte 1: El Frontend (Lo que ve el usuario)
 
-Hice los cambios principales en `assets/js/main.js` y un poco en `index_ajax.html`.
+Aquí es donde ocurre la "magia" que el usuario puede ver. Hice los cambios principales en mi fichero `assets/js/main.js`.
 
 ### 1. Añadir el botón "Editar" a cada fila
 
-Cuando creo la tabla de usuarios, ahora también añado un botón de "Editar" junto al de "Eliminar". Le puse un atributo especial `data-posicion` para saber a qué fila pertenece.
-
-**Fichero**: `c/xampp/htdocs/RA2_PR1/src/assets/js/main.js`
-```javascript
-function renderizarTablaDeUsuarios(arrayUsuarios) {
-    // ... código para limpiar la tabla ...
-    arrayUsuarios.forEach((usuario, posicionEnLista) => {
-        const nodoFila = document.createElement('tr');
-        nodoFila.innerHTML = `
-<td>${posicionEnLista + 1}</td>
-<td>${convertirATextoSeguro(usuario?.nombre ?? '')}</td>
-<td>${convertirATextoSeguro(usuario?.email ?? '')}</td>
-<td>
-    <button
-        type="button"
-        class="boton-editar"
-        data-posicion="${posicionEnLista}"
-        aria-label="Editar usuario ${posicionEnLista + 1}">
-        Editar
-    </button>
-    <button
-        type="button"
-        class="boton-eliminar"
-        data-posicion="${posicionEnLista}"
-        aria-label="Eliminar usuario ${posicionEnLista + 1}">
-        Eliminar
-    </button>
-</td>
-`;
-        nodoCuerpoTablaUsuarios.appendChild(nodoFila);
-    });
-}
-```
+Lo primero fue modificar la función `renderizarTablaDeUsuarios`. Dentro del bucle que recorre los usuarios, donde construyo el HTML de cada fila, añadí un nuevo botón. A este botón le puse la clase `boton-editar` y, lo más importante, un atributo `data-posicion` al que le asigno la posición del usuario en la lista. Así, cada botón "sabe" a qué fila pertenece.
 
 ### 2. Escuchar el clic en "Editar"
 
-He modificado el "escuchador de eventos" de la tabla para que, si se hace clic en un botón con la clase `boton-editar`, se active el "modo edición".
-
-**Fichero**: `c/xampp/htdocs/RA2_PR1/src/assets/js/main.js`
-```javascript
-nodoCuerpoTablaUsuarios?.addEventListener('click', async (evento) => {
-    // ...
-    // Manejar botón de editar
-    if (nodoBoton.classList.contains('boton-editar')) {
-        // ... obtenemos los datos del usuario del servidor ...
-        const usuarioAEditar = cuerpoJson.data[posicionUsuario];
-        // ¡Activamos el modo edición!
-        activarModoEdicion(posicionUsuario, usuarioAEditar);
-    }
-    // ...
-});
-```
+Luego, en el `addEventListener` que escucha los clics en la tabla, añadí una nueva condición. Ahora compruebo si el botón que se ha pulsado contiene la clase `boton-editar`. Si es así, significa que el usuario quiere editar. En ese momento, llamo a una nueva función que he creado, `activarModoEdicion`, y le paso la posición y los datos del usuario que se va a modificar.
 
 ### 3. Activar el "Modo Edición"
 
-La función `activarModoEdicion` que creé se encarga de transformar el formulario:
-
--   Rellena los campos de nombre y email.
--   Cambia el texto del botón de "Agregar" a "Actualizar".
--   Cambia el título del formulario.
-
-**Fichero**: `c/xampp/htdocs/RA2_PR1/src/assets/js/main.js`
-```javascript
-function activarModoEdicion(indiceUsuario, datosUsuario) {
-    modoEdicion = true; // Una variable global que nos dice que estamos editando
-    indiceUsuarioEnEdicion = indiceUsuario;
-   
-    // Llenar el formulario con los datos del usuario
-    document.getElementById('campo-nombre').value = datosUsuario.nombre || '';
-    document.getElementById('campo-email').value = datosUsuario.email || '';
-   
-    // Cambiar el texto del botón y el título del formulario
-    document.getElementById('boton-agregar-usuario').textContent = 'Actualizar usuario';
-    document.getElementById('titulo-formulario').textContent = 'Editar usuario';
-}
-```
+La función `activarModoEdicion` que creé se encarga de transformar el formulario. Primero, pongo una variable global que he llamado `modoEdicion` a `true`. Esto me servirá como un interruptor para que el resto del código sepa que estamos editando. Después, relleno los campos del formulario con el nombre y el email del usuario. Finalmente, cambio el texto del botón de "Agregar usuario" a "Actualizar usuario" y el título del formulario a "Editar usuario".
 
 ### 4. Enviar los datos actualizados
 
-Cuando el usuario pulsa "Actualizar usuario", el formulario se envía. Gracias a mi variable `modoEdicion`, el código sabe que no tiene que crear un usuario nuevo, sino actualizar uno existente.
+El último paso en el frontend fue modificar el `addEventListener` del formulario. Ahora, antes de enviar los datos, compruebo si mi variable `modoEdicion` es `true`. Si lo es, significa que estamos actualizando. En ese caso, preparo la URL para que apunte a la acción `edit` y añado el `index` del usuario a los datos que se van a enviar. Si `modoEdicion` es `false`, todo funciona como antes, creando un usuario nuevo con la acción `create`.
 
-Fíjate cómo le paso al servidor la acción `edit` y el `index` (la posición) del usuario que quiero cambiar.
+---
 
-**Fichero**: `c/xampp/htdocs/RA2_PR1/src/assets/js/main.js`
-```javascript
-formularioAltaUsuario?.addEventListener('submit', async (evento) => {
-    // ...
-    if (modoEdicion) {
-        // Modo edición
-        url = `${URL_API_SERVIDOR}?action=edit`; // ¡La acción correcta!
-        datosUsuario.index = indiceUsuarioEnEdicion; // Le decimos cuál editar
-        mensajeExito = 'Usuario actualizado correctamente.';
-    } else {
-        // Modo creación (como estaba antes)
-        url = `${URL_API_SERVIDOR}?action=create`;
-        mensajeExito = 'Usuario agregado correctamente.';
-    }
+## Parte 2: El Backend (El trabajo sucio en el servidor)
 
-    // Hacemos la llamada al servidor con los datos
-    const respuestaHttp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datosUsuario),
-    });
-    // ...
-});
-```
-
-## Parte 2: El Backend 
+Mi servidor `api.php` ahora tiene que ser capaz de entender la orden `action=edit`.
 
 ### 1. Recibir y procesar la petición de edición
 
-Añadí un nuevo bloque `if` en `api.php` que se activa solo si el método es `POST` y la acción es `edit`.
+Para ello, añadí un nuevo bloque `if` en `api.php`. Esta nueva sección se activa solo si el método de la petición es `POST` y la acción solicitada es `edit`. Dentro de este bloque, leo los datos que me llegan (nombre, email y el `index` del usuario a editar). Tras validar que los datos son correctos (que no están vacíos, que el email es válido, etc.), busco al usuario en mi lista usando el `index`. Una vez encontrado, simplemente reemplazo sus datos antiguos por los nuevos, guardo la lista completa de usuarios de nuevo en el fichero `data.json` y devuelvo la lista actualizada para que el frontend la pueda mostrar.
 
-Este bloque:
--   Lee los datos que le envía el JavaScript (`nombre`, `email` y el `index`).
--   Valida que los datos sean correctos (que no estén vacíos, que el email sea válido, etc.).
--   Busca al usuario en la lista usando el `index`.
--   Reemplaza los datos antiguos por los nuevos.
--   Guarda toda la lista de usuarios de nuevo en el fichero `data.json`.
--   Devuelve la lista actualizada para que el frontend la pueda mostrar.
-
-**Fichero**: `c/xampp/htdocs/RA2_PR1/src/api.php`
-```php
-// Metodo de editar usuario y/o correo
-// Editar usuario: POST /api.php?action=edit
-if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'edit') {
-    // ... (aquí se leen los datos: index, nombre, email)
-
-    // ... (aquí se valida que todo esté correcto)
-
-    // Editamos y persistimos (guardamos el email normalizado)
-    $listaUsuarios[$indiceUsuarioAEditar] = [
-        'nombre' => $nombreUsuarioEditado,
-        'email' => $correoUsuarioNormalizado,
-    ];
-    file_put_contents(
-        $rutaArchivoDatosJson,
-        json_encode($listaUsuarios, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n"
-    );
-    responder_json_exito($listaUsuarios, 200); // Enviamos la lista actualizada
-}
-```
+¡Y eso es todo! Conectando estas piezas del frontend y el backend, conseguí una funcionalidad de edición moderna y fluida para el usuario.
