@@ -47,3 +47,6 @@ Mi servidor `api.php` ahora tiene que ser capaz de entender la orden `action=edi
 ### 1. Recibir y procesar la petición de edición
 
 Para ello, añadí un nuevo bloque `if` en `api.php`. Esta nueva sección se activa solo si el método de la petición es `POST` y la acción solicitada es `edit`. Dentro de este bloque, leo los datos que me llegan (nombre, email y el `index` del usuario a editar). Tras validar que los datos son correctos (que no están vacíos, que el email es válido, etc.), busco al usuario en mi lista usando el `index`. Una vez encontrado, simplemente reemplazo sus datos antiguos por los nuevos, guardo la lista completa de usuarios de nuevo en el fichero `data.json` y devuelvo la lista actualizada para que el frontend la pueda mostrar.
+
+
+Link al github: https://github.com/nicolasalvo/CRUD-Asincrono.git
