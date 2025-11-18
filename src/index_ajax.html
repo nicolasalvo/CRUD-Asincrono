@@ -1,12 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="utf-8">
     <title>Mini CRUD AJAX (fetch + JSON)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Hoja de estilos básica -->
-    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 
 <body>
@@ -35,6 +34,18 @@
                     <input id="campo-email" name="email" class="form-input" type="email" required maxlength="120"
                         placeholder="ejemplo@correo.com" autocomplete="email" inputmode="email">
                 </div>
+                <div class="form-row">
+                    <label for="campo-password" class="form-label">Contraseña</label>
+                    <input id="campo-password" name="password" class="form-input" type="password" required maxlength="120" placeholder="********">
+                </div>
+                <div class="form-row">
+                    <label for="campo-email" class="form-label">Rol</label>
+                    <select id="campo-rol" name="rol" class="form-input" required>
+                        <option value="" disabled selected>Seleccione un rol</option>
+                        <option value="admin">Administrador</option>
+                        <option value="usuario">Usuario</option>
+                    </select>
+                </div>
                 <div class="form-actions">
                     <button id="boton-agregar-usuario" type="submit" class="boton-primario">
                         Agregar usuario
@@ -58,13 +69,14 @@
                             <th scope="col">#</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Email</th>
+                            <th scope="col">Rol</th>
                             <th scope="col">Acción</th>
                         </tr>
                     </thead>
                     <tbody id="tbody">
                         <!-- Fila de estado vacío (se alterna desde JS) -->
                         <tr id="fila-estado-vacio" class="fila-estado-vacio" hidden>
-                            <td colspan="4"><em>No hay usuarios registrados todavía.</em></td>
+                            <td colspan="5"><em>No hay usuarios registrados todavía.</em></td>
                         </tr>
                     </tbody>
                 </table>

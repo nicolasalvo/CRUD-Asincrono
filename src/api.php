@@ -72,6 +72,8 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'create') {
     // Extraemos datos y normalizamos
     $nombreUsuarioNuevo = trim((string) ($datosDecodificados['nombre'] ?? $_POST['nombre'] ?? ''));
     $correoUsuarioNuevo = trim((string) ($datosDecodificados['email'] ?? $_POST['email'] ?? ''));
+    $contraseñaUsuarioNuevo = trim((string) ($datosDecodificados['password'] ?? $_POST['password'] ?? ''));
+    $rolUsuarioNuevo = trim((string) ($datosDecodificados['role'] ?? $_POST['role'] ?? ''));
     $correoUsuarioNormalizado = mb_strtolower($correoUsuarioNuevo);
     // Validación mínima en servidor
     if ($nombreUsuarioNuevo === '' || $correoUsuarioNuevo === '') {
@@ -95,6 +97,8 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'create') {
     $listaUsuarios[] = [
         'nombre' => $nombreUsuarioNuevo,
         'email' => $correoUsuarioNormalizado,
+        'password' => $contraseñaUsuarioNuevo,
+        'rol' => $rolUsuarioNuevo,
     ];
     file_put_contents(
         $rutaArchivoDatosJson,

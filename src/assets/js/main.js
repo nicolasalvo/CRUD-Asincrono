@@ -159,10 +159,12 @@ formularioAltaUsuario?.addEventListener('submit', async (evento) => {
     const datosUsuario = {
         nombre: String(datosFormulario.get('nombre') || '').trim(),
         email: String(datosFormulario.get('email') || '').trim(),
+        password: String(datosFormulario.get('password') || '').trim(),
+        rol: String(datosFormulario.get('rol') || '').trim(),
     };
     // Validación HTML5 rápida (por si el navegador no la lanza)
-    if (!datosUsuario.nombre || !datosUsuario.email) {
-        mostrarMensajeDeEstado('error', 'Los campos Nombre y Email son obligatorios.');
+    if (!datosUsuario.nombre || !datosUsuario.email || !datosUsuario.password || !datosUsuario.rol) {
+        mostrarMensajeDeEstado('error', 'Todos los campos son obligatorios.');
         return;
     }
    
