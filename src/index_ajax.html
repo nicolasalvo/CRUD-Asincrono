@@ -1,94 +1,171 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>Mini CRUD AJAX (fetch + JSON)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Hoja de estilos básica -->
-    <link rel="stylesheet" href="./assets/css/styles.css">
-</head>
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
 
-<body>
+  <body>
     <!-- Encabezado semántico -->
     <header class="encabezado-aplicacion">
-        <h1 class="encabezado-aplicacion__titulo">Mini CRUD con fetch() (sin Base de Datos)</h1>
-        <p class="encabezado-aplicacion__descripcion">
-            Esta pantalla usa JavaScript para hablar con la API PHP y actualizar la tabla sin recargar la
-            página.
-        </p>
+      <h1 class="encabezado-aplicacion__titulo">
+        Mini CRUD con fetch() (sin Base de Datos)
+      </h1>
+      <p class="encabezado-aplicacion__descripcion">
+        Esta pantalla usa JavaScript para hablar con la API PHP y actualizar la
+        tabla sin recargar la página.
+      </p>
     </header>
     <main class="zona-principal" id="zona-principal" tabindex="-1">
-        <!-- Zona de mensajes (con aria-live para lectores de pantalla) -->
-        <div id="msg" class="mensajes-estado" role="status" aria-live="polite" aria-atomic="true"></div>
-        <!-- Formulario de alta de usuario con etiquetas asociadas y atributos de ayuda -->
-        <section class="bloque-formulario" aria-labelledby="titulo-formulario">
-            <h2 id="titulo-formulario">Agregar nuevo usuario</h2>
-            <form id="formCreate" class="formulario-alta-usuario" autocomplete="on" novalidate>
-                <div class="form-row">
-                    <label for="campo-nombre" class="form-label">Nombre</label>
-                    <input id="campo-nombre" name="nombre" class="form-input" type="text" required minlength="2"
-                        maxlength="60" placeholder="Ej.: Ana Pérez" autocomplete="name" inputmode="text">
-                </div>
-                <div class="form-row">
-                    <label for="campo-email" class="form-label">Email</label>
-                    <input id="campo-email" name="email" class="form-input" type="email" required maxlength="120"
-                        placeholder="ejemplo@correo.com" autocomplete="email" inputmode="email">
-                </div>
-                <div class="form-row">
-                    <label for="campo-password" class="form-label">Contraseña</label>
-                    <input id="campo-password" name="password" class="form-input" type="password" required maxlength="120" placeholder="********">
-                </div>
-                <div class="form-row">
-                    <label for="campo-email" class="form-label">Rol</label>
-                    <select id="campo-rol" name="rol" class="form-input" required>
-                        <option value="" disabled selected>Seleccione un rol</option>
-                        <option value="admin">Administrador</option>
-                        <option value="usuario">Usuario</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button id="boton-agregar-usuario" type="submit" class="boton-primario">
-                        Agregar usuario
-                    </button>
-                    <button id="boton-cancelar-edicion" type="button" class="boton-secundario" hidden>
-                        Cancelar
-                    </button>
-                    <span id="indicador-cargando" class="indicador-cargando" aria-hidden="true" hidden>
-                        Cargando...
-                    </span>
-                </div>
-            </form>
-        </section>
-        <!-- Listado de usuarios -->
-        <section class="bloque-listado" aria-labelledby="titulo-listado">
-            <h2 id="titulo-listado">Listado de usuarios</h2>
-            <div class="tabla-contenedor" role="region" aria-labelledby="titulo-listado">
-                <table class="tabla-usuarios">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Rol</th>
-                            <th scope="col">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody">
-                        <!-- Fila de estado vacío (se alterna desde JS) -->
-                        <tr id="fila-estado-vacio" class="fila-estado-vacio" hidden>
-                            <td colspan="5"><em>No hay usuarios registrados todavía.</em></td>
-                        </tr>
-                    </tbody>
-                </table>
+      <!-- Zona de mensajes (con aria-live para lectores de pantalla) -->
+      <div
+        id="msg"
+        class="mensajes-estado"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
+      <!-- Formulario de alta de usuario con etiquetas asociadas y atributos de ayuda -->
+      <section class="bloque-formulario" aria-labelledby="titulo-formulario">
+        <h2 id="titulo-formulario">Agregar nuevo usuario</h2>
+        <form
+          id="formCreate"
+          class="formulario-alta-usuario"
+          autocomplete="on"
+          novalidate
+        >
+          <div class="formulario-campos">
+            <div class="form-row">
+              <label for="campo-nombre" class="form-label">Nombre</label>
+              <input
+                id="campo-nombre"
+                name="nombre"
+                class="form-input"
+                type="text"
+                required
+                minlength="2"
+                maxlength="60"
+                placeholder="Ej.: Ana Pérez"
+                autocomplete="name"
+                inputmode="text"
+              />
             </div>
-        </section>
+            <div class="form-row">
+              <label for="campo-email" class="form-label">Email</label>
+              <input
+                id="campo-email"
+                name="email"
+                class="form-input"
+                type="email"
+                required
+                maxlength="120"
+                placeholder="ejemplo@correo.com"
+                autocomplete="email"
+                inputmode="email"
+              />
+            </div>
+            <div class="form-row">
+              <label for="campo-password" class="form-label">Contraseña</label>
+              <input
+                id="campo-password"
+                name="password"
+                class="form-input"
+                type="password"
+                required
+                maxlength="120"
+                placeholder="********"
+              />
+            </div>
+            <div class="form-row">
+              <label for="campo-email" class="form-label">Rol</label>
+              <select id="campo-rol" name="rol" class="form-input" required>
+                <option value="" disabled selected>Seleccione un rol</option>
+                <option value="admin">Administrador</option>
+                <option value="usuario">Usuario</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              id="boton-agregar-usuario"
+              type="submit"
+              class="boton-primario"
+            >
+              Agregar usuario
+            </button>
+            <button
+              id="boton-cancelar-edicion"
+              type="button"
+              class="boton-secundario"
+              hidden
+            >
+              Cancelar
+            </button>
+            <span
+              id="indicador-cargando"
+              class="indicador-cargando"
+              aria-hidden="true"
+              hidden
+            >
+              Cargando...
+            </span>
+          </div>
+        </form>
+      </section>
+      <!-- Listado de usuarios -->
+      <section class="bloque-listado" aria-labelledby="titulo-listado">
+        <h2 id="titulo-listado">Listado de usuarios</h2>
+        <div
+          class="tabla-contenedor"
+          role="region"
+          aria-labelledby="titulo-listado"
+        >
+          <table class="tabla-usuarios">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Email</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <!-- Fila de estado vacío (se alterna desde JS) -->
+              <tr id="fila-estado-vacio" class="fila-estado-vacio" hidden>
+                <td colspan="4">
+                  <em>No hay usuarios registrados todavía.</em>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
     <!-- Enlace de retorno a la Parte 1 (opcional) -->
     <footer class="pie-aplicacion">
-        <p><a href="/index.php">Ir a Parte 1 (clásica sin AJAX)</a></p>
+      <p><a href="/index.php">Ir a Parte 1 (clásica sin AJAX)</a></p>
     </footer>
     <!-- Nuestro JavaScript -->
     <script src="/assets/js/main.js" defer></script>
-</body>
-
+  </body>
 </html>
+<style scoped>
+    .formulario-campos {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 420px;
+  margin-bottom: 1rem;
+}
+
+.formulario-campos input, .formulario-campos select {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+</style>

@@ -4,13 +4,21 @@
         "email": "nicolasoxosal@dwda.mdwonlau.com"
     },
     {
-        "nombre": "Nicolasdawda",
-        "email": "nicolasoxosal@dwddawda.mdwonlau.com"
+        "nombre": "adwa",
+        "email": "dawda@dawda-dawdd.dadw",
+        "password": "wda",
+        "rol": ""
+    },
+    {
+        "nombre": "awdda",
+        "email": "wadawd@dawd-daw.adw",
+        "password": "dawd",
+        "rol": "admin"
     },
     {
         "nombre": "dawda",
-        "email": "dawda@dawda-dawd.dawd",
-        "password": "awdad",
-        "role": ""
+        "email": "dawda@dawda-dawd.sdad",
+        "password": "dawd",
+        "rol": "admin"
     }
 ]

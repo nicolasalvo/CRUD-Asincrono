@@ -115,6 +115,7 @@ function renderizarTablaDeUsuarios(arrayUsuarios) {
 <td>${posicionEnLista + 1}</td>
 <td>${convertirATextoSeguro(usuario?.nombre ?? '')}</td>
 <td>${convertirATextoSeguro(usuario?.email ?? '')}</td>
+<td>${convertirATextoSeguro(usuario?.rol ?? '')}</td>
 <td>
 <button
 type="button"

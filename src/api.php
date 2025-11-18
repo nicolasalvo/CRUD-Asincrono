@@ -73,7 +73,7 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'create') {
     $nombreUsuarioNuevo = trim((string) ($datosDecodificados['nombre'] ?? $_POST['nombre'] ?? ''));
     $correoUsuarioNuevo = trim((string) ($datosDecodificados['email'] ?? $_POST['email'] ?? ''));
     $contraseñaUsuarioNuevo = trim((string) ($datosDecodificados['password'] ?? $_POST['password'] ?? ''));
-    $rolUsuarioNuevo = trim((string) ($datosDecodificados['role'] ?? $_POST['role'] ?? ''));
+    $rolUsuarioNuevo = trim((string) ($datosDecodificados['rol'] ?? $_POST['rol'] ?? ''));
     $correoUsuarioNormalizado = mb_strtolower($correoUsuarioNuevo);
     // Validación mínima en servidor
     if ($nombreUsuarioNuevo === '' || $correoUsuarioNuevo === '') {
@@ -81,6 +81,12 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'create') {
     }
     if (!filter_var($correoUsuarioNuevo, FILTER_VALIDATE_EMAIL)) {
         responder_json_error('El campo "email" no tiene un formato válido.', 422);
+    }
+    if ($contraseñaUsuarioNuevo === '') {
+        responder_json_error('El campo "password" es obligatorio.', 422);
+    }
+    if ($rolUsuarioNuevo === 0 || $rolUsuarioNuevo === '') {
+        responder_json_error('El campo "rol" es obligatorio.', 422);
     }
     // Límites razonables para este ejercicio
     if (mb_strlen($nombreUsuarioNuevo) > 60) {
@@ -117,6 +123,8 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'edit') {
     $indiceEnQuery = $datosDecodificados['index'] ?? null;
     $nombreUsuarioEditado = trim((string) ($datosDecodificados['nombre'] ?? ''));
     $correoUsuarioEditado = trim((string) ($datosDecodificados['email'] ?? ''));
+    $contraseñaUsuarioEditado = trim((string) ($datosDecodificados['password'] ?? ''));
+    $rolUsuarioEditado = trim((string) ($datosDecodificados['rol'] ?? ''));
     $correoUsuarioNormalizado = mb_strtolower($correoUsuarioEditado);
 
     // Validación mínima en servidor
@@ -158,6 +166,8 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'edit') {
     $listaUsuarios[$indiceUsuarioAEditar] = [
         'nombre' => $nombreUsuarioEditado,
         'email' => $correoUsuarioNormalizado,
+        'password' => $contraseñaUsuarioEditado,
+        'rol' => $rolUsuarioEditado,
     ];
     file_put_contents(
         $rutaArchivoDatosJson,
