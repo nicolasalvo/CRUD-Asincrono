@@ -1,24 +1,14 @@
 [
     {
-        "nombre": "Nicolasdawda",
-        "email": "nicolasoxosal@dwda.mdwonlau.com"
-    },
-    {
-        "nombre": "adwa",
-        "email": "dawda@dawda-dawdd.dadw",
-        "password": "wda",
-        "rol": ""
-    },
-    {
-        "nombre": "awdda",
-        "email": "wadawd@dawd-daw.adw",
-        "password": "dawd",
+        "nombre": "dawda",
+        "email": "awdada@gmail.com",
+        "password": "$2y$12$B5.X2PZo48x\/QXEsAlwZverwZmP4I.xokAZ.qEgrxwQEMrCeWb2MC",
         "rol": "admin"
     },
     {
         "nombre": "dawda",
-        "email": "dawda@dawda-dawd.sdad",
-        "password": "dawd",
-        "rol": "admin"
+        "email": "ayuda@usuario.com",
+        "password": "$2y$12$dGJTSigMH8kuwSgNerRR4OrQaOqYbjhJCRpM5kZ.Gy25pVWDF5Ww.",
+        "rol": "usuario"
     }
 ]

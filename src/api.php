@@ -99,11 +99,11 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'create') {
     if (existeEmailDuplicado($listaUsuarios, $correoUsuarioNormalizado)) {
         responder_json_error('Ya existe un usuario con ese email.', 409);
     }
-    // Agregamos y persistimos (guardamos el email normalizado)
+    $contra_hashed_nueva = password_hash($contraseñaUsuarioNuevo, PASSWORD_DEFAULT);
     $listaUsuarios[] = [
         'nombre' => $nombreUsuarioNuevo,
-        'email' => $correoUsuarioNormalizado,
-        'password' => $contraseñaUsuarioNuevo,
+        'email' => $correoUsuarioNormalizado, 
+        'password' => $contra_hashed_nueva,
         'rol' => $rolUsuarioNuevo,
     ];
     file_put_contents(
@@ -123,7 +123,7 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'edit') {
     $indiceEnQuery = $datosDecodificados['index'] ?? null;
     $nombreUsuarioEditado = trim((string) ($datosDecodificados['nombre'] ?? ''));
     $correoUsuarioEditado = trim((string) ($datosDecodificados['email'] ?? ''));
-    $contraseñaUsuarioEditado = trim((string) ($datosDecodificados['password'] ?? ''));
+    $contraseñaUsuarioEditado = trim((string) ($datosDecodificados['password'] ?? '')); // Contraseña en texto plano
     $rolUsuarioEditado = trim((string) ($datosDecodificados['rol'] ?? ''));
     $correoUsuarioNormalizado = mb_strtolower($correoUsuarioEditado);
 
@@ -162,13 +162,20 @@ if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'edit') {
         }
     }
 
+    $usuarioAEditar = &$listaUsuarios[$indiceUsuarioAEditar];
+    $usuarioAEditar['nombre'] = $nombreUsuarioEditado;
+    $usuarioAEditar['email'] = $correoUsuarioNormalizado;
+    $usuarioAEditar['rol'] = $rolUsuarioEditado;
+
+    // Solo actualizamos la contraseña si se proporcionó una nueva
+    if ($contraseñaUsuarioEditado !== '') {
+        if (mb_strlen($contraseñaUsuarioEditado) < 8) {
+            responder_json_error('La contraseña debe tener al menos 8 caracteres.', 422);
+        }
+        $usuarioAEditar['password'] = password_hash($contraseñaUsuarioEditado, PASSWORD_DEFAULT);
+    }
+
     // Editamos y persistimos (guardamos el email normalizado)
-    $listaUsuarios[$indiceUsuarioAEditar] = [
-        'nombre' => $nombreUsuarioEditado,
-        'email' => $correoUsuarioNormalizado,
-        'password' => $contraseñaUsuarioEditado,
-        'rol' => $rolUsuarioEditado,
-    ];
     file_put_contents(
         $rutaArchivoDatosJson,
         json_encode($listaUsuarios, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n"
