@@ -64,6 +64,41 @@ $accionSolicitada = $_GET['action'] ?? $_POST['action'] ?? 'list';
 if ($metodoHttpRecibido === 'GET' && $accionSolicitada === 'list') {
     responder_json_exito($listaUsuarios); // 200 OK
 }
+// 4.1) LOGIN: POST /api.php?action=login
+// Body JSON esperado: { "email": "...", "password": "..." }
+if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'login') {
+    $cuerpoBruto = (string) file_get_contents('php://input');
+    $datos = $cuerpoBruto !== '' ? (json_decode($cuerpoBruto, true) ?? []) : [];
+    $email = trim((string) ($datos['email'] ?? $_POST['email'] ?? ''));
+    $password = (string) ($datos['password'] ?? $_POST['password'] ?? '');
+
+    if ($email === '' || $password === '') {
+        responder_json_error('Email y password son obligatorios.', 422);
+    }
+
+    // Buscar usuario por email
+    $usuarioEncontrado = null;
+    foreach ($listaUsuarios as $u) {
+        if (isset($u['email']) && is_string($u['email']) && mb_strtolower($u['email']) === mb_strtolower($email)) {
+            $usuarioEncontrado = $u;
+            break;
+        }
+    }
+
+    if ($usuarioEncontrado === null) {
+        responder_json_error('Usuario no encontrado.', 401);
+    }
+
+    // Verificar la contraseña (suponiendo que en data.json está almacenado el hash)
+    $hashAlmacenado = $usuarioEncontrado['password'] ?? '';
+    if ($hashAlmacenado === '' || !password_verify($password, $hashAlmacenado)) {
+        responder_json_error('Credenciales inválidas.', 401);
+    }
+
+    // Devolver el rol del usuario
+    $rol = $usuarioEncontrado['rol'] ?? 'usuario';
+    responder_json_exito(['role' => $rol]);
+}
 // 5) CREAR usuario: POST /api.php?action=create
 // Body JSON esperado: { "nombre": "...", "email": "..." }
 if ($metodoHttpRecibido === 'POST' && $accionSolicitada === 'create') {

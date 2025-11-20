@@ -255,3 +255,15 @@ nodoCuerpoTablaUsuarios?.addEventListener('click', async (evento) => {
     }
 });
 obtenerYMostrarListadoDeUsuarios();
+
+const btnLogout = document.getElementById('btn-logout');
+const userRoleStored = localStorage.getItem('userRole');
+if (btnLogout) {
+    btnLogout.hidden = !userRoleStored;
+    btnLogout.addEventListener('click', () => {
+        // Eliminar role y cualquier dato de sesión necesario
+        localStorage.removeItem('userRole');
+        // Redirigir al login
+        window.location.href = '/login.html';
+    });
+}

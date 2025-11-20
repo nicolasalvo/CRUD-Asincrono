@@ -1,14 +1,14 @@
 [
     {
-        "nombre": "dawda",
-        "email": "awdada@gmail.com",
-        "password": "$2y$12$B5.X2PZo48x\/QXEsAlwZverwZmP4I.xokAZ.qEgrxwQEMrCeWb2MC",
-        "rol": "admin"
+        "nombre": "nico",
+        "email": "ayuda@usuario.com",
+        "password": "$2y$12$6jxUUaYoAfkSHa8OEskZBO1UDdoBqjAk7Ytw9dyMZPZ.eRPta0KDq",
+        "rol": "usuario"
     },
     {
-        "nombre": "dawda",
-        "email": "ayuda@usuario.com",
-        "password": "$2y$12$dGJTSigMH8kuwSgNerRR4OrQaOqYbjhJCRpM5kZ.Gy25pVWDF5Ww.",
-        "rol": "usuario"
+        "nombre": "hola",
+        "email": "ayuda@admin.com",
+        "password": "$2y$12$Kny..QwvksABEiLiPf4Gr.z0SfaddM.GDSvIbLiynAlMw9WGVHyd2",
+        "rol": "admin"
     }
 ]
